@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Todo = require("../models/todo");
+const authenticateUser = require("../middlewares/authenticateUser");
 
 router.use(express.json());
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",authenticateUser,async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
     if (!todo) {
@@ -16,7 +17,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/",authenticateUser, async (req, res) => {
   try {
     const todos = await Todo.find();
     res.status(200).json(todos);
@@ -25,7 +26,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/",authenticateUser, async (req, res) => {
   try {
     const newTodo = new Todo({
       title: req.body.title,
@@ -39,7 +40,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",authenticateUser, async (req, res) => {
   try {
     const todoId = req.params.id;
     const deletedTodo = await Todo.findByIdAndDelete(todoId);
@@ -52,7 +53,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",authenticateUser, async (req, res) => {
     try {
         const todoId = req.params.id;
         const oldTodo = await Todo.findById(todoId);

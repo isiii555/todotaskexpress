@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, firstName, lastName, password, email } = req.body;
     let user = await User.findOne({ email });
     if (!user) {
       let passwordHash = await bcrypt.hash(password, 10);
@@ -37,6 +37,8 @@ router.post("/register", async (req, res) => {
         email,
         username,
         passwordHash,
+        firstName,
+        lastName
       });
       await newUser.save();
       let accessToken = generateAccessToken(newUser);
@@ -59,7 +61,9 @@ router.post("/refresh", async (req, res) => {
     let user = result.data;
     let newAccessToken = generateAccessToken(user);
     let newRefreshToken = generateRefreshToken(user);
-    res.status(200).json({ accessToken : newAccessToken, refreshToken : newRefreshToken });
+    res
+      .status(200)
+      .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
   } catch (err) {
     res.status(500).json(err);
   }
